@@ -1,0 +1,15 @@
+@startuml
+:Пользователь: --> (input)
+"Вход в программу" as (input)
+"Начать игру" as (game)
+"Посмотреть список лидеров" as (top)
+"Посмотреть инструкцию" as (rules)
+"Выйти из программы" as (out)
+"Сохранить результат" as (save)
+
+input --> game
+input --> top
+input --> rules
+input --> out
+game --> save
+@enduml
