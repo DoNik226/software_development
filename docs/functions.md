@@ -1,20 +1,6 @@
 # Функциональные модели
 ## Диаграмма вариантов использования приложения
-@startuml
-:Пользователь: --> (input)
-"Вход в программу" as (input)
-"Начать игру" as (game)
-"Посмотреть список лидеров" as (top)
-"Посмотреть инструкцию" as (rules)
-"Выйти из программы" as (out)
-"Сохранить результат" as (save)
-
-input --> game
-input --> top
-input --> rules
-input --> out
-game --> save
-@enduml
+![Диаграмма вариантов использования приложения](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/DoNik226/software_development/main/docs/1.iuml)
 ## Функциональные возможности
 1. Начало игры
     * Пользователь делает: нажимает кнопку «Play» на главном экране
