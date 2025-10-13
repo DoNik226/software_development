@@ -6,7 +6,7 @@ graph TD
     B-- controls -->C[Ship]
     C-- moves over -->E[Screen]
     E-- spawns -->F[Enemy]
-    F-- may cause -->|collision|G[Catastrophe]
+    F-- may cause -->G[Catastrophe]
     H[Bonus]-- provides protection -->I[Shield]
     I-- expires after -->J[Timeout]
     K[InputBox]-- collects -->L[UserName]
