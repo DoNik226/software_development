@@ -1,7 +1,7 @@
 ![Диаграмма классов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/DoNik226/software_development/main/docs/class.iuml)
 
 mermaid
-graph TD
+```graph TD
     A[Game]-->B[Player]
     B-- controls -->C[Ship]
     C-- moves over -->E[Screen]
@@ -12,3 +12,4 @@ graph TD
     K[InputBox]-- collects -->L[UserName]
     L-- used by -->A
     M[Records]-- stores -->N[HighScores]
+```
