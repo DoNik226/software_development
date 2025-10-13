@@ -35,7 +35,7 @@ stateDiagram-v2
         ShowRecords : Демонстрация рекордов
     }
     RR.SaveRecord --> RR.ShowRecords : Результат сохранен
-    RR.ShowRecords --> RR.SaveRecord :        Новый результат доступен для сохранения
+    RR.ShowRecords --> RR.SaveRecord : Можно сохранить результат
 ```
 Эта диаграмма демонстрирует процесс сохранения и демонстрации рекордов. Из нее видно, как сохраняются новые результаты и каким образом демонстрируются существующие рекорды.
 ## Диаграмма состояний бонусов
@@ -58,8 +58,7 @@ stateDiagram-v2
     Enabled : Включён
     Disabled : Выключен
     }
-SH.Enabled --> SH.Disabled : Срок действия
-завершён
+SH.Enabled --> SH.Disabled : Срок вышел
 
 SH.Disabled --> SH.Enabled : Игрок собрал щит
 ```
