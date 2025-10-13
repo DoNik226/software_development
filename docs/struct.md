@@ -1,4 +1,5 @@
-# Диаграмма классов
+# Структурные модели
+## Диаграмма классов
 ![Диаграмма классов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/DoNik226/software_development/main/docs/class.iuml)
 
 ## Описание диаграммы классов
@@ -10,7 +11,7 @@
 * InputBox: Компонент для сбора имени игрока при завершении игры.
 * Records: Классифицирует и сохраняет игровые рекорды.
 
-# Диаграмма объектов
+## Диаграмма объектов
 ```mermaid
 graph TD
     A[Game]-->B[Player]
