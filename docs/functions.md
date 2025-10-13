@@ -45,7 +45,7 @@
     * Пользователь: просматривает таблицу рекордов и нажимает клавишу ESC
     * Приложение: возвращает пользователя в главное меню
 
-![Сохранение результата](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/DoNik226/software_development/main/docs/6.iuml)
+![Просмотр таблицы рекордов](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/DoNik226/software_development/main/docs/6.iuml)
 
 
 7. Просмотр правил
@@ -53,6 +53,8 @@
     * Приложение: отображает правила игры и инструкцию по управлению
     * Пользователь: изучает информацию и нажимает клавишу ESC
     * Приложение: возвращает пользователя в главное меню
+  
+![Просмотр правил](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/DoNik226/software_development/main/docs/7.iuml)
 8. Выход из игры
     * Пользователь делает: в главном меню нажимает на кнопку «Выход»
     * Приложение делает: закрывает игру и завершает все процессы
