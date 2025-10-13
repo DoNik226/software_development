@@ -7,3 +7,5 @@
 Ссылка на описание функциональных моделей [functions.md](docs/functions.md) 
 
 Ссылка на описание структурных моделей [struct.md](docs/struct.md) 
+
+Ссылка на описание поведенческих моделей [behavior.md](docs/behavior.md) 
