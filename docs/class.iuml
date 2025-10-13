@@ -42,10 +42,12 @@ class Records {
 
 Main --> Menu : has a
 Menu --> Game : uses
+Menu --> Records : uses
 Game --> Enemy : creates
 Game --> Bonus : creates
 Game --> InputBox : uses
 Records <-- Game : stores results
+Records <-- Menu : get results
 InputBox <-- Game : collects user input
 
 @enduml
