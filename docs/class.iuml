@@ -47,7 +47,7 @@ Game --> Enemy : creates
 Game --> Bonus : creates
 Game --> InputBox : uses
 Records <-- Game : stores results
-Records <-- Menu : get results
+Records --> Menu : get results
 InputBox <-- Game : collects user input
 
 @enduml
