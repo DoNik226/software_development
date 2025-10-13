@@ -1,0 +1,51 @@
+@startuml
+
+class Main {
+    +main()
+}
+
+class Menu {
+    +show_menu()
+    +select_level()
+    +show_records()
+    +show_help()
+}
+
+class Game {
+    +run_game()
+    +spawn_enemy()
+    +check_collision()
+    +format_time()
+}
+
+class Enemy {
+    +move()
+    +draw()
+}
+
+class Bonus {
+    +update()
+    +draw()
+}
+
+class InputBox {
+    +handle_event()
+    +center_input_box()
+    +update()
+    +draw()
+}
+
+class Records {
+    +save_record()
+    +load_records()
+}
+
+Main --> Menu : has a
+Menu --> Game : uses
+Game --> Enemy : creates
+Game --> Bonus : creates
+Game --> InputBox : uses
+Records <-- Game : stores results
+InputBox <-- Game : collects user input
+
+@enduml
