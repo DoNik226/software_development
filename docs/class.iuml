@@ -16,6 +16,10 @@ class Game {
     +spawn_enemy()
     +check_collision()
     +format_time()
+    +process_events()
+    +game_logic()
+    +render_game()
+    +collect_results()
 }
 
 class Enemy {
