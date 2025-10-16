@@ -6,11 +6,10 @@ class Menu:
     def __init__(self, screen):
         self.screen = screen
         self.records = Records()
-        self.width, self.height = screen.get_size()  # Получаем ширину и высоту экрана
+        self.width, self.height = screen.get_size()
 
 
     def center_text(self, surface, y_pos):
-        """Центрировать текст по горизонтали"""
         rect = surface.get_rect(center=(self.width // 2, y_pos))
         return rect
 
@@ -38,9 +37,9 @@ class Menu:
 
                     selected_button %= len(buttons)
 
-            self.screen.fill((0, 0, 0))  # Черный фон
+            self.screen.fill((0, 0, 0))
 
-            y_pos = self.height // 2 - len(buttons) * 25  # Центровка кнопок вертикально
+            y_pos = self.height // 2 - len(buttons) * 25
             for i, button in enumerate(buttons):
                 color = (255, 255, 255) if i != selected_button else (0, 255, 0)
                 text_surface = font.render(button[0], True, color)
@@ -70,26 +69,25 @@ class Menu:
 
             self.screen.fill((0, 0, 0))
 
-            # Центровка уровней горизонтально
-            x_pos = self.width // 2 - len(levels) * 75 // 2  # Средняя точка по оси X минус половина суммарной длины
-            y_pos = self.height // 2  # Уровень сложности располагается по центру экрана по вертикали
+            x_pos = self.width // 2 - len(levels) * 75 // 2
+            y_pos = self.height // 2
 
             for i, level in enumerate(levels):
                 color = (255, 255, 255) if i != selected_level else (0, 255, 0)
                 text_surface = font.render(level, True, color)
                 rect = text_surface.get_rect(
-                    center=(x_pos + i * 150, y_pos))  # Централизуем каждую надпись по своей позиции
+                    center=(x_pos + i * 150, y_pos))
                 self.screen.blit(text_surface, rect)
 
             pygame.display.flip()
 
     def show_records(self):
-        font = pygame.font.Font(None, 36)  # Единообразный шрифт для заголовков и данных
+        font = pygame.font.Font(None, 36)
 
         records = self.records.load_records()
 
-        scroll_offset = 0  # Смещение для прокрутки
-        visible_rows = (self.height - 100) // 40  # Максимальное количество строк, которые видны одновременно
+        scroll_offset = 0
+        visible_rows = (self.height - 100) // 40
         total_rows = len(records)
 
         running = True
@@ -99,26 +97,24 @@ class Menu:
                     if event.key == pygame.K_ESCAPE:
                         running = False
                     elif event.key == pygame.K_UP:
-                        scroll_offset = max(scroll_offset - 1, 0)  # Прокручиваем вверх
+                        scroll_offset = max(scroll_offset - 1, 0)
                     elif event.key == pygame.K_DOWN and total_rows - visible_rows > 0:
-                        scroll_offset = min(scroll_offset + 1, total_rows - visible_rows)  # Прокручиваем вниз
+                        scroll_offset = min(scroll_offset + 1, total_rows - visible_rows)
 
-            self.screen.fill((0, 0, 0))  # Чёрный фон
+            self.screen.fill((0, 0, 0))
 
             # Параметры таблицы
-            padding = 20  # Общий отступ от краев экрана
-            column_width_ratio = [0.1, 0.25, 0.4, 0.25]  # Пропорции ширины столбцов
+            padding = 20
+            column_width_ratio = [0.1, 0.25, 0.4, 0.25]
             column_widths = [w * (self.width - 2 * padding) for w in column_width_ratio]
             table_x = padding
             table_y = padding
-            row_height = 40  # Высота одной строки
-            header_height = 60  # Высота заголовочной строки
+            row_height = 40
+            header_height = 60
 
-            # Заголовки таблицы
             title_headers = ["Место", "Имя игрока", "Продолжительность (сек)", "Сложность"]
 
             # Линия сетки таблицы
-            # Горизонтальные линии
             pygame.draw.line(self.screen, (255, 255, 255), (table_x, table_y), (table_x + sum(column_widths), table_y),
                              2)
             pygame.draw.line(self.screen, (255, 255, 255), (table_x, table_y + header_height),
@@ -127,21 +123,18 @@ class Menu:
                 pygame.draw.line(self.screen, (255, 255, 255), (table_x, table_y + header_height + i * row_height),
                                  (table_x + sum(column_widths), table_y + header_height + i * row_height), 2)
 
-            # Вертикальные линии
             current_x = table_x
             for width in column_widths:
                 pygame.draw.line(self.screen, (255, 255, 255), (current_x, table_y),
                                  (current_x, table_y + header_height + visible_rows * row_height), 2)
                 current_x += width
-            # Крайняя правая линия
             pygame.draw.line(self.screen, (255, 255, 255), (current_x, table_y),
                              (current_x, table_y + header_height + visible_rows * row_height), 2)
 
             # Наполнение таблицы данными
-            # Заголовки
             x_offset = table_x
             for idx, header in enumerate(title_headers):
-                text_surface = font.render(header, True, (255, 255, 0))  # Жёлтый цвет заголовков
+                text_surface = font.render(header, True, (255, 255, 0))
                 text_rect = text_surface.get_rect(midtop=(x_offset + column_widths[idx] / 2, table_y + padding))
                 self.screen.blit(text_surface, text_rect)
                 x_offset += column_widths[idx]
@@ -150,8 +143,7 @@ class Menu:
             y_pos = table_y + header_height
             displayed_records = records[scroll_offset:scroll_offset + visible_rows]
             for idx, record in enumerate(displayed_records):
-                # Расчёт истинного индекса (места) основываясь на глобальном индексе записей
-                true_row_idx = scroll_offset + idx + 1  # Поскольку нумерация с 1-го места
+                true_row_idx = scroll_offset + idx + 1
                 columns = [
                     str(true_row_idx),
                     record["name"],
@@ -161,7 +153,7 @@ class Menu:
 
                 x_offset = table_x
                 for col_idx, value in enumerate(columns):
-                    text_surface = font.render(value, True, (255, 255, 255))  # Белый цвет данных
+                    text_surface = font.render(value, True, (255, 255, 255))
                     text_rect = text_surface.get_rect(midleft=(x_offset + padding, y_pos + padding))
                     self.screen.blit(text_surface, text_rect)
                     x_offset += column_widths[col_idx]
@@ -171,8 +163,8 @@ class Menu:
             pygame.display.flip()
 
     def show_help(self):
-        title_font = pygame.font.SysFont('arial', 48, bold=True)  # Заголовочный шрифт
-        content_font = pygame.font.SysFont('verdana', 24)  # Основной шрифт
+        title_font = pygame.font.SysFont('arial', 48, bold=True)
+        content_font = pygame.font.SysFont('verdana', 24)
 
         help_title = "Справка по игре Космический боец"
         help_lines = [
@@ -197,30 +189,28 @@ class Menu:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     running = False
 
-            self.screen.fill((0, 0, 0))  # Черный фон
+            self.screen.fill((0, 0, 0))
 
-            x_offset = 100  # Отступ слева
-            y_pos = 100  # Верхняя позиция начала текста
+            x_offset = 100
+            y_pos = 100
 
-            # Вывод заголовка
             title_surface = title_font.render(help_title, True, (255, 255, 255))
             title_rect = title_surface.get_rect(topleft=(x_offset, y_pos))
             self.screen.blit(title_surface, title_rect)
-            y_pos += 60  # Промежуток перед основным текстом
+            y_pos += 60
 
             # Вывод пунктов справки
             for category, details in help_lines:
-                # Категория пункта
                 cat_surface = content_font.render(category, True, (255, 255, 0))
                 cat_rect = cat_surface.get_rect(topleft=(x_offset, y_pos))
                 self.screen.blit(cat_surface, cat_rect)
-                y_pos += 30  # Увеличили позицию ниже текущего блока
+                y_pos += 30
 
                 # Детализация каждого пункта
                 for detail in details:
                     det_surface = content_font.render(detail, True, (255, 255, 255))
                     det_rect = det_surface.get_rect(topleft=(x_offset + 20, y_pos))
                     self.screen.blit(det_surface, det_rect)
-                    y_pos += 30  # Перемещаемся ниже последнего текста
+                    y_pos += 30
 
             pygame.display.flip()

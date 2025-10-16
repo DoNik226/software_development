@@ -19,7 +19,6 @@ class InputBox:
         self.font = pygame.font.SysFont(None, 32)
 
     def center_input_box(self):
-        """Центрирует поле ввода по середине экрана"""
         screen_width, _ = self.screen.get_size()
         self.rect.centerx = screen_width // 2
         self.rect.centery = self.screen.get_height() // 2
@@ -34,9 +33,9 @@ class InputBox:
         if event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]  # Удаляем последнюю букву
+                    self.text = self.text[:-1]
                 else:
-                    self.text += event.unicode  # Добавляем новый символ
+                    self.text += event.unicode
 
     def update(self, events):
         for event in events:
@@ -67,21 +66,18 @@ class Game:
         self.clock = pygame.time.Clock()
         self.player_name = ''
         self.enemies = []
-        self.bonuses = []  # Список активных бонусов
+        self.bonuses = []
         self.start_time = None
         self.last_spawn_time = None
         self.elapsed_seconds = None
         self.game_over = False
-        self.shield_active = False  # Индикатор активности щита
-        self.shield_start_time = None  # Новое свойство для начала действия щита
-        self.last_bonus_time = 0  # Последнее время появления бонуса
+        self.shield_active = False
+        self.shield_start_time = None
+        self.last_bonus_time = 0
 
     def spawn_enemy(self, player_position):
-        """Создание нового врага в случайной точке экрана, исключая область возле игрока."""
-        # Радиус безопасной зоны (три размера корабля)
-        safe_radius = 3 * 64  # Три раза размер корабля
+        safe_radius = 3 * 64
 
-        # Продолжаем пытаться создать позицию вне безопасной зоны
         while True:
             new_pos = (
                 random.randint(safe_radius, SCREEN_WIDTH - safe_radius - 32),
@@ -115,13 +111,11 @@ class Game:
         return False
 
     def format_time(self, seconds):
-        """Форматирование времени в минуты и секунды."""
         minutes = int(seconds // 60)
         secs = int(seconds % 60)
         return f"{minutes}:{secs:02d}"
 
     def process_events(self):
-        """Обработка событий (клавиатурный ввод)."""
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -129,7 +123,6 @@ class Game:
         return True
 
     def game_logic(self, current_time, player_position, player_speed):
-        """Логика игры (обработка столкновений, спавн врагов, получение бонусов)."""
         # Перемещение игрока
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]: player_position[1] -= player_speed
@@ -187,7 +180,6 @@ class Game:
         return True
 
     def render_game(self, player_position, formatted_time):
-        """Отрисовка всех игровых элементов на экране."""
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.ship_image, tuple(player_position))
 
@@ -204,7 +196,7 @@ class Game:
             shield_timer_text = font.render(f'Щит: {remaining_shield_time:.1f} сек.', True, (255, 255, 255))
             self.screen.blit(shield_timer_text, (10, 80))
 
-        # Рисуем врагов и бонусы
+        #Рисуем врагов
         for enemy in self.enemies:
             enemy.draw(self.screen)
         for bonus in self.bonuses:
@@ -213,7 +205,6 @@ class Game:
         pygame.display.flip()
 
     def collect_results(self):
-        """Сбор результатов игры (имя игрока, длительность, уровень сложности)."""
         input_box = InputBox(self.screen)
         done = False
         while not done:
@@ -233,7 +224,6 @@ class Game:
         }
 
     def run_game(self):
-        """Главный цикл игры."""
         player_position = [400, 300]
         player_speed = 5
         original_ship_image = pygame.image.load('../assets/ship1.gif')
@@ -248,14 +238,11 @@ class Game:
             self.elapsed_seconds = (current_time - self.start_time * 1000) / 1000
             formatted_time = self.format_time(self.elapsed_seconds)
 
-            # Обработка событий
             if not self.process_events():
                 break
 
-            # Основная игровая логика
             running = self.game_logic(current_time, player_position, player_speed)
 
-            # Рендеринг игры
             self.render_game(player_position, formatted_time)
 
             self.clock.tick(60)

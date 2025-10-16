@@ -22,12 +22,9 @@ class Records:
                         'difficulty': parts[2].strip()
                     })
 
-                # Сортируем по сложности (первичный критерий) и длительности (вторичный критерий)
-                # ЧЕМ НИЗЖЕ сложность (т.е., ближе к 1), ТЕМ ВЫШЕ РЕЙТИНГ
-                # Внутри сложности — сортируем ПО УБАВЛЕНИЮ времени
                 sorted_records = sorted(records,
                                         key=lambda r: ({"Сложный": 1, "Средний": 2, "Легкий": 3}[r['difficulty']],
-                                                       -r['duration']))  # Меняем знак, чтобы было по убыванию
+                                                       -r['duration']))
                 return sorted_records
         except FileNotFoundError:
             return []

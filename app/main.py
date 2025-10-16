@@ -8,28 +8,27 @@ def main():
     pygame.display.set_caption("Космический боец")
     clock = pygame.time.Clock()
 
-    # Экземпляр меню
     menu = Menu(screen)
 
     while True:
-        action = menu.show_menu()  # Показываем главное меню
+        action = menu.show_menu()
 
         if action == 'play':
-            level_difficulty = menu.select_level()  # Выбор уровня сложности
+            level_difficulty = menu.select_level()
             game = Game(screen, level_difficulty)
-            result = game.run_game()  # Запускаем игру
+            result = game.run_game()
 
             if result is not None:
-                menu.records.save_record(result)  # Сохраняем результат игрока
+                menu.records.save_record(result)
 
         elif action == 'records':
-            menu.show_records()  # Просмотр рекордов
+            menu.show_records()
 
         elif action == 'help':
-            menu.show_help()  # Справочная страница
+            menu.show_help()
 
         elif action == 'exit':
-            break  # Выход из программы
+            break
 
     pygame.quit()
 
