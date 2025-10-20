@@ -1,3 +1,5 @@
+import unittest
+
 import pygame
 import pytest
 from unittest.mock import MagicMock
@@ -18,6 +20,21 @@ def setup_game(mock_screen):
     game = Game(mock_screen, "Легкий")
     return game
 
+def create_keydown_event(key):
+    return pygame.event.Event(pygame.KEYDOWN, {"key": key})
+
+def test_difficulty_easy(mock_screen):
+    game = Game(mock_screen, 'Легкий')
+    assert game.spawn_interval == 2000 and game.lives == 3
+
+def test_difficulty_medium(mock_screen):
+    game = Game(mock_screen, 'Средний')
+    assert game.spawn_interval == 1500 and game.lives == 2
+
+def test_difficulty_hard(mock_screen):
+    game = Game(mock_screen, 'Сложный')
+    assert game.spawn_interval == 1000 and game.lives == 1
+
 # Исправленный первый тест (ослаблено условие)
 def test_spawn_enemy_far_from_player(setup_game):
     """Генерируется враг на правильном расстоянии от игрока."""
@@ -27,7 +44,7 @@ def test_spawn_enemy_far_from_player(setup_game):
     enemy = game.enemies[-1]  # Последний добавленный враг
     dist = ((enemy.rect.centerx - player_position[0]) ** 2 +
             (enemy.rect.centery - player_position[1]) ** 2) ** 0.5
-    assert dist >= 175  # Ослабили условие до минимально приемлемого расстояния
+    assert dist >= 180  # Ослабили условие до минимально приемлемого расстояния
 
 # Следующие тесты остаются без изменений
 def test_collision_with_enemy(setup_game):
@@ -51,4 +68,28 @@ def test_multiple_collisions(setup_game):
         game.check_collision(player_rect)
     assert game.lives == 0  # Игра закончилась
 
+def test_format_time_multiple_minutes_and_seconds(setup_game):
+    game = setup_game
+    result = game.format_time(123)
+    expected_result = "2:03"
+    assert result == expected_result
 
+def test_format_time_large_number_of_seconds(setup_game):
+    game = setup_game
+    result = game.format_time(3661)
+    expected_result = "61:01"
+    assert result == expected_result
+
+def test_escape_pressed(setup_game):
+    """Проверяем реакцию на нажатие ESCAPE"""
+    escape_event = create_keydown_event(pygame.K_ESCAPE)
+    with unittest.mock.patch('pygame.event.get', return_value=[escape_event]):
+        result = setup_game.process_events()
+        assert result == False
+
+def test_other_keys_pressed(setup_game):
+    """Проверяем обработку любых других клавиш кроме ESCAPE"""
+    other_key_event = create_keydown_event(pygame.K_SPACE)
+    with unittest.mock.patch('pygame.event.get', return_value=[other_key_event]):
+        result = setup_game.process_events()
+        assert result == True
