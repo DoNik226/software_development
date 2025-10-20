@@ -16,7 +16,7 @@ jobs:
           
       - name: Установка зависимостей
         run: |
-          pip install coverage pytest pytest-cov
+          pip install coverage pytest pytest-cov pygame
       
       - name: Запуск тестов и покрытие кода
         run: |
