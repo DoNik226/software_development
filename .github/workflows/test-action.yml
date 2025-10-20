@@ -18,7 +18,7 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE
           pytest --cov-report=xml:coverage.xml tests/
       - name: Coveralls
-        run: coveralls -t ${{ secrets.COVERALLS_REPO_TOKEN }} --root . -E ".*tests.*"
+        uses: coverallsapp/github-action@v2
 
       
   sonarcloud-check:
