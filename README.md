@@ -10,4 +10,4 @@
 
 Ссылка на описание поведенческих моделей [behavior.md](docs/behavior.md) 
 
-Описание тестов [description.md](docs/description.md) 
+Описание тестов [descriptions.md](docs/descriptions.md) 
