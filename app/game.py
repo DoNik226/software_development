@@ -198,6 +198,7 @@ class Game:
 
         #Рисуем врагов
         for enemy in self.enemies:
+            enemy.move()
             enemy.draw(self.screen)
         for bonus in self.bonuses:
             bonus.draw(self.screen)
