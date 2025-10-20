@@ -1,0 +1,4 @@
+[report]
+omit =
+    app/main.py
+    app/menu.py
