@@ -313,3 +313,220 @@ def test_screen_boundaries(game):
         # Проверяем, что позиция не ушла за границы
         assert player_position == [0, 0]
         assert result is True
+
+
+class TestRunGame:
+    @pytest.fixture
+    def game(self):
+        """Создает экземпляр Game для тестирования run_game"""
+        mock_screen = Mock()
+        mock_screen.get_size.return_value = (800, 600)
+        game = Game(mock_screen, 'Легкий')
+
+        # Инициализируем необходимые атрибуты
+        game.clock = Mock()
+        game.clock.tick.return_value = None
+
+        return game
+
+    def test_run_game_initialization(self, game):
+        """Тест инициализации игры в run_game"""
+        with patch('pygame.image.load') as mock_load, \
+                patch('pygame.transform.scale') as mock_scale, \
+                patch('pygame.time.get_ticks') as mock_ticks, \
+                patch.object(game, 'process_events') as mock_events, \
+                patch.object(game, 'game_logic') as mock_logic, \
+                patch.object(game, 'render_game') as mock_render, \
+                patch.object(game, 'collect_results') as mock_collect:
+            # Настраиваем моки
+            mock_ship_image = Mock()
+            mock_load.return_value = mock_ship_image
+            mock_scale.return_value = mock_ship_image
+            mock_ticks.return_value = 1000
+            mock_events.return_value = False  # Выход из игры сразу
+            mock_collect.return_value = {'name': 'Test', 'duration': 0, 'difficulty': 'Легкий'}
+
+            # Запускаем игру
+            results = game.run_game()
+
+            # Проверяем инициализацию
+            mock_load.assert_called_once_with('../assets/ship1.gif')
+            mock_scale.assert_called_once_with(mock_ship_image, (64, 64))
+            assert game.ship_image == mock_ship_image
+            assert game.last_spawn_time == 1000
+            assert game.start_time == 1.0  # 1000 / 1000
+
+            # Проверяем, что игра корректно завершилась
+            mock_collect.assert_called_once()
+            assert results['name'] == 'Test'
+
+    def test_run_game_game_over(self, game):
+        """Тест завершения игры через game_logic (поражение)"""
+        with patch('pygame.image.load') as mock_load, \
+                patch('pygame.transform.scale') as mock_scale, \
+                patch('pygame.time.get_ticks') as mock_ticks, \
+                patch.object(game, 'process_events') as mock_events, \
+                patch.object(game, 'game_logic') as mock_logic, \
+                patch.object(game, 'render_game') as mock_render, \
+                patch.object(game, 'collect_results') as mock_collect:
+            # Настраиваем моки
+            mock_ship_image = Mock()
+            mock_load.return_value = mock_ship_image
+            mock_scale.return_value = mock_ship_image
+
+            # Используем счетчик времени
+            call_count = 0
+
+            def get_ticks_side_effect():
+                nonlocal call_count
+                result = call_count * 100
+                call_count += 1
+                return result
+
+            mock_ticks.side_effect = get_ticks_side_effect
+
+            mock_events.return_value = True
+            mock_logic.return_value = False  # Игра завершена (поражение)
+
+            mock_collect.return_value = {
+                'name': 'Player2',
+                'duration': 0.1,
+                'difficulty': 'Легкий'
+            }
+
+            results = game.run_game()
+
+            # Проверяем, что игра завершилась через game_logic
+            mock_events.assert_called_once()
+            mock_logic.assert_called_once()
+            mock_render.assert_called_once()
+
+            mock_collect.assert_called_once()
+            assert results['duration'] == 0.1
+
+    def test_run_game_time_calculation(self, game):
+        """Тест корректности расчета времени игры"""
+        with patch('pygame.image.load') as mock_load, \
+                patch('pygame.transform.scale') as mock_scale, \
+                patch('pygame.time.get_ticks') as mock_ticks, \
+                patch.object(game, 'process_events') as mock_events, \
+                patch.object(game, 'game_logic') as mock_logic, \
+                patch.object(game, 'render_game') as mock_render, \
+                patch.object(game, 'collect_results') as mock_collect:
+            # Настраиваем моки
+            mock_ship_image = Mock()
+            mock_load.return_value = mock_ship_image
+            mock_scale.return_value = mock_ship_image
+
+            # Используем счетчик времени
+            call_count = 0
+
+            def get_ticks_side_effect():
+                nonlocal call_count
+                result = call_count * 1000
+                call_count += 1
+                return result
+
+            mock_ticks.side_effect = get_ticks_side_effect
+
+            # 4 итерации цикла + завершение
+            mock_events.side_effect = [True, True, True, True, False]
+            mock_logic.return_value = True
+
+            mock_collect.return_value = {
+                'name': 'Player3',
+                'duration': 4.0,  # Изменяем ожидаемое время на 4.0 секунды
+                'difficulty': 'Легкий'
+            }
+
+            results = game.run_game()
+
+            # Проверяем расчет времени
+            # start_time = 1000 / 1000 = 1.0 (второй вызов get_ticks)
+            # Последний current_time = 5000 (шестой вызов get_ticks)
+            # elapsed_seconds = (5000 - 1.0 * 1000) / 1000 = 4.0
+            assert results['duration'] == 4.0
+
+    def test_run_game_different_difficulties(self, game):
+        """Тест инициализации игры с разными уровнями сложности"""
+        difficulties = ['Легкий', 'Средний', 'Сложный']
+        expected_lives = [3, 2, 1]
+        expected_intervals = [2000, 1500, 1000]
+
+        for i, difficulty in enumerate(difficulties):
+            mock_screen = Mock()
+            mock_screen.get_size.return_value = (800, 600)
+            game = Game(mock_screen, difficulty)
+
+            assert game.difficulty == difficulty
+            assert game.lives == expected_lives[i]
+            assert game.spawn_interval == expected_intervals[i]
+
+    def test_run_game_exception_handling(self, game):
+        """Тест обработки исключений в игровом цикле"""
+        with patch('pygame.image.load') as mock_load, \
+                patch('pygame.transform.scale') as mock_scale, \
+                patch('pygame.time.get_ticks') as mock_ticks, \
+                patch.object(game, 'process_events') as mock_events, \
+                patch.object(game, 'game_logic') as mock_logic, \
+                patch.object(game, 'render_game') as mock_render, \
+                patch.object(game, 'collect_results') as mock_collect:
+            # Настраиваем моки
+            mock_ship_image = Mock()
+            mock_load.return_value = mock_ship_image
+            mock_scale.return_value = mock_ship_image
+
+            # Используем счетчик времени
+            call_count = 0
+
+            def get_ticks_side_effect():
+                nonlocal call_count
+                result = call_count * 100
+                call_count += 1
+                return result
+
+            mock_ticks.side_effect = get_ticks_side_effect
+
+            # Симулируем исключение во второй итерации
+            mock_events.side_effect = [
+                True,  # Первая итерация - игра продолжается
+                Exception("Test exception"),  # Вторая итерация - исключение
+            ]
+            mock_logic.return_value = True
+
+            mock_collect.return_value = {
+                'name': 'Player4',
+                'duration': 0.1,
+                'difficulty': 'Легкий'
+            }
+
+            # Проверяем, что исключение прокидывается наружу
+            with pytest.raises(Exception, match="Test exception"):
+                game.run_game()
+
+    def test_run_game_resource_cleanup(self, game):
+        """Тест корректного освобождения ресурсов"""
+        with patch('pygame.image.load') as mock_load, \
+                patch('pygame.transform.scale') as mock_scale, \
+                patch('pygame.time.get_ticks') as mock_ticks, \
+                patch.object(game, 'process_events') as mock_events, \
+                patch.object(game, 'game_logic') as mock_logic, \
+                patch.object(game, 'render_game') as mock_render, \
+                patch.object(game, 'collect_results') as mock_collect:
+            # Настраиваем моки
+            mock_ship_image = Mock()
+            mock_load.return_value = mock_ship_image
+            mock_scale.return_value = mock_ship_image
+            mock_ticks.return_value = 1000
+
+            mock_events.return_value = False  # Выход сразу
+            mock_collect.return_value = {'name': 'Test', 'duration': 0, 'difficulty': 'Легкий'}
+
+            # Запускаем игру
+            results = game.run_game()
+
+            # Проверяем, что все необходимые методы были вызваны
+            mock_load.assert_called_once()
+            mock_scale.assert_called_once()
+            mock_events.assert_called_once()
+            mock_collect.assert_called_once()
