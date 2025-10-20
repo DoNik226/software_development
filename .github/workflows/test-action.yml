@@ -59,8 +59,4 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner \
-            --define sonar.projectKey=YOUR_PROJECT_KEY \
-            --define sonar.organization=YOUR_ORGANIZATION_NAME \
-            --define sonar.host.url=${SONAR_SERVER_URL} \
-            --define sonar.sourceEncoding=UTF-8 \
             --define sonar.python.coverage.reportPaths=coverage.xml
