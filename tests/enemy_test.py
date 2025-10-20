@@ -1,7 +1,7 @@
 import pytest
 import pygame
 
-from enemy import Enemy
+from app.enemy import Enemy
 
 global SCREEN_WIDTH, SCREEN_HEIGHT
 SCREEN_WIDTH = 1600
@@ -56,3 +56,4 @@ def test_low_speed():
     assert abs(enemy.rect.x - 100) < 1  # едва заметно смещается
 
     assert abs(enemy.rect.y - 100) < 1  # минимальное отклонение
+
