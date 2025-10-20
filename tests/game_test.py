@@ -62,7 +62,6 @@ def test_spawn_enemy_far_from_player(setup_game):
             (enemy.rect.centery - player_position[1]) ** 2) ** 0.5
     assert dist >= 170  # Ослабили условие до минимально приемлемого расстояния
 
-# Следующие тесты остаются без изменений
 def test_collision_with_enemy(setup_game):
     """Происходит уменьшение жизней при столкновении с врагом."""
     game = setup_game
@@ -621,6 +620,7 @@ class TestCollectResults:
 
 
     
+
 
 
 
