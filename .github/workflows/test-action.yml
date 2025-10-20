@@ -16,9 +16,12 @@ jobs:
       - run: |
           source venv/bin/activate
           export PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE
-          pytest --cov-report=xml:coverage.xml tests/
+          pytest --cov-report=xml tests/
       - name: Coveralls
-        uses: coverallsapp/github-action@v2
+        uses: coverallsapp/github-action@main
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          path-to-lcov: coverage.xml
 
       
   sonarcloud-check:
