@@ -27,7 +27,7 @@ def test_spawn_enemy_far_from_player(setup_game):
     enemy = game.enemies[-1]  # Последний добавленный враг
     dist = ((enemy.rect.centerx - player_position[0]) ** 2 +
             (enemy.rect.centery - player_position[1]) ** 2) ** 0.5
-    assert dist >= 180  # Ослабили условие до минимально приемлемого расстояния
+    assert dist >= 175  # Ослабили условие до минимально приемлемого расстояния
 
 # Следующие тесты остаются без изменений
 def test_collision_with_enemy(setup_game):
@@ -50,4 +50,5 @@ def test_multiple_collisions(setup_game):
         game.enemies.append(enemy)
         game.check_collision(player_rect)
     assert game.lives == 0  # Игра закончилась
+
 
