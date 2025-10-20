@@ -17,6 +17,8 @@ jobs:
           source venv/bin/activate
           export PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE
           pytest --cov-report=xml tests/
+      - name: Проверка наличия файла coverage.xml
+      - run: ls -al coverage.xml
       - name: Coveralls
         uses: coverallsapp/github-action@main
         with:
