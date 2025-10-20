@@ -60,3 +60,4 @@ jobs:
         run: |
           sonar-scanner \
             --define sonar.python.coverage.reportPaths=coverage.xml
+            --skip-automatic-analysis
