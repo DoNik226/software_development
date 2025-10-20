@@ -59,5 +59,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner \
-            --define sonar.python.coverage.reportPaths=coverage.xml
-            --skip-automatic-analysis
+            -Dsonar.python.coverage.reportPaths=coverage.xml \
+            -Dsonar.analysis.ci=true \
+            -Dsonar.scm.provider=git
