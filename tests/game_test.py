@@ -530,3 +530,97 @@ class TestRunGame:
             mock_scale.assert_called_once()
             mock_events.assert_called_once()
             mock_collect.assert_called_once()
+
+
+class TestCollectResults:
+    @pytest.fixture
+    def game(self):
+        """Создает экземпляр Game для тестирования"""
+        mock_screen = Mock()
+        mock_screen.get_size.return_value = (800, 600)
+        game = Game(mock_screen, 'Легкий')
+        game.elapsed_seconds = 120.5  # Устанавливаем прошедшее время
+        return game
+
+    def test_collect_results_normal_flow(self, game):
+        """Тест нормального сбора результатов с вводом имени"""
+        with patch('app.game.InputBox') as mock_input_box_class, \
+                patch('pygame.event.get') as mock_events, \
+                patch('pygame.display.flip') as mock_flip:
+            # Создаем mock для InputBox
+            mock_input_box = Mock()
+            mock_input_box.text = "TestPlayer\n"
+            mock_input_box_class.return_value = mock_input_box
+
+            # Симулируем события: сначала обычные события, затем нажатие Enter
+            mock_events.side_effect = [
+                [Mock(type=pygame.KEYDOWN, key=pygame.K_a)],  # Любое событие (не Enter)
+                [Mock(type=pygame.KEYDOWN, key=pygame.K_RETURN)]  # Нажатие Enter
+            ]
+
+            results = game.collect_results()
+
+            # Проверяем, что InputBox был создан
+            mock_input_box_class.assert_called_once_with(game.screen)
+
+            # Проверяем, что update и draw вызывались
+            assert mock_input_box.update.call_count >= 1
+            assert mock_input_box.draw.call_count >= 1
+
+            # Проверяем результаты
+            assert results == {
+                'name': 'TestPlayer',
+                'duration': 120.5,
+                'difficulty': 'Легкий'
+            }
+            assert game.player_name == 'TestPlayer'
+
+    def test_collect_results_empty_name(self, game):
+        """Тест сбора результатов с пустым именем"""
+        with patch('app.game.InputBox') as mock_input_box_class, \
+                patch('pygame.event.get') as mock_events, \
+                patch('pygame.display.flip') as mock_flip:
+            mock_input_box = Mock()
+            mock_input_box.text = "\n"  # Пустое имя с символом новой строки
+            mock_input_box_class.return_value = mock_input_box
+
+            # Сразу нажимаем Enter
+            mock_events.return_value = [Mock(type=pygame.KEYDOWN, key=pygame.K_RETURN)]
+
+            results = game.collect_results()
+
+            # Проверяем, что имя обрезано до пустой строки
+            assert results['name'] == ''
+            assert game.player_name == ''
+
+
+    def test_collect_results_with_different_difficulties(self):
+        """Тест сбора результатов для разных уровней сложности"""
+        difficulties = ['Легкий', 'Средний', 'Сложный']
+
+        for difficulty in difficulties:
+            mock_screen = Mock()
+            mock_screen.get_size.return_value = (800, 600)
+            game = Game(mock_screen, difficulty)
+            game.elapsed_seconds = 90.0
+
+            with patch('app.game.InputBox') as mock_input_box_class, \
+                    patch('pygame.event.get') as mock_events, \
+                    patch('pygame.display.flip') as mock_flip:
+                mock_input_box = Mock()
+                mock_input_box.text = f"Player_{difficulty}\n"
+                mock_input_box_class.return_value = mock_input_box
+
+                mock_events.return_value = [Mock(type=pygame.KEYDOWN, key=pygame.K_RETURN)]
+
+                results = game.collect_results()
+
+                # Проверяем, что сложность сохраняется правильно
+                assert results['difficulty'] == difficulty
+                assert results['name'] == f"Player_{difficulty}"
+
+
+    
+
+
+
