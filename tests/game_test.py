@@ -62,6 +62,7 @@ def test_spawn_enemy_far_from_player(setup_game):
             (enemy.rect.centery - player_position[1]) ** 2) ** 0.5
     assert dist >= 170  # Ослабили условие до минимально приемлемого расстояния
 
+# Следующие тесты остаются без изменений
 def test_collision_with_enemy(setup_game):
     """Происходит уменьшение жизней при столкновении с врагом."""
     game = setup_game
@@ -353,7 +354,7 @@ class TestRunGame:
             mock_scale.assert_called_once_with(mock_ship_image, (64, 64))
             assert game.ship_image == mock_ship_image
             assert game.last_spawn_time == 1000
-            assert game.start_time == 1.0  # 1000 / 1000
+            assert game.start_time == 1  # 1000 / 1000
 
             # Проверяем, что игра корректно завершилась
             mock_collect.assert_called_once()
@@ -401,7 +402,7 @@ class TestRunGame:
             mock_render.assert_called_once()
 
             mock_collect.assert_called_once()
-            assert results['duration'] == 0.1
+            assert abs(results['duration'] - 0.1) < 1e-9
 
     def test_run_game_time_calculation(self, game):
         """Тест корректности расчета времени игры"""
@@ -444,9 +445,9 @@ class TestRunGame:
             # start_time = 1000 / 1000 = 1.0 (второй вызов get_ticks)
             # Последний current_time = 5000 (шестой вызов get_ticks)
             # elapsed_seconds = (5000 - 1.0 * 1000) / 1000 = 4.0
-            assert results['duration'] == 4.0
+            assert results['duration'] == 4
 
-    def test_run_game_different_difficulties(self, game):
+    def test_run_game_different_difficulties(self):
         """Тест инициализации игры с разными уровнями сложности"""
         difficulties = ['Легкий', 'Средний', 'Сложный']
         expected_lives = [3, 2, 1]
@@ -619,7 +620,6 @@ class TestCollectResults:
                 assert results['name'] == f"Player_{difficulty}"
 
 
-    
 
 
 
