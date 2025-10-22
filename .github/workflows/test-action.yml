@@ -57,7 +57,7 @@ jobs:
           java-version: '17'
       
       - name: Установка SonarScanner
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-c-cpp@v2
 
       - name: Запуск тестов с генерацией отчёта
         run: |
