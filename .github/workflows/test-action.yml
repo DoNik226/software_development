@@ -27,7 +27,6 @@ jobs:
 
       
   sonarcloud-check:
-    needs: software-development-tests
     runs-on: ubuntu-latest
     env:
       SONAR_SCANNER_VERSION: 4.6.1.2450
@@ -38,6 +37,13 @@ jobs:
         with:
           fetch-depth: 0
       
+      - name: Установка Python и зависимостей
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install coverage pytest pytest-cov pygame
+
       - name: Установка Java
         uses: actions/setup-java@v3
         with:
@@ -46,12 +52,12 @@ jobs:
       
       - name: Установка SonarScanner
         uses: SonarSource/sonarcloud-github-c-cpp@v2
-      
-      - name: Сборка проекта (для Python не требуется)
-        run: echo "No need to build a Python project"
-      
-      - name: Запуск тестов (Python-тесты уже выполнены ранее)
-        run: echo "Tests already executed in previous job"
+
+      - name: Запуск тестов с генерацией отчёта
+        run: |
+          source venv/bin/activate
+          export PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE
+          pytest --cov=app --cov-report=xml:coverage.xml tests/
       
       - name: Анализ SonarCloud
         env:
