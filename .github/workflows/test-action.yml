@@ -4,7 +4,7 @@ jobs:
   software-development-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -34,16 +34,16 @@ jobs:
   sonarcloud-check:
     needs: software-development-tests
     runs-on: ubuntu-latest
-    env:
-      SONAR_SCANNER_VERSION: 4.6.1.2450
-      SONAR_SERVER_URL: "https://sonarcloud.io"
-      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
-      - name: Установка Python и зависимостей
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Установка зависимостей
         run: |
           python -m venv venv
           source venv/bin/activate
@@ -57,7 +57,7 @@ jobs:
           java-version: '17'
       
       - name: Установка SonarScanner
-        uses: SonarSource/sonarcloud-github-c-cpp@v2
+        uses: SonarSource/sonarcloud-github-action@master
 
       - name: Запуск тестов с генерацией отчёта
         run: |
@@ -72,8 +72,11 @@ jobs:
         run: |
           sonar-scanner \
             -Dsonar.python.coverage.reportPaths=coverage.xml \
-            -Dsonar.analysis.ci=true \
-            -Dsonar.scm.provider=git \
+            -Dsonar.python.version=3.13 \
+            -Dsonar.sources=app \
+            -Dsonar.tests=tests \
+            -Dsonar.language=py \
+            -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.c.file.suffixes=- \
             -Dsonar.cpp.file.suffixes=- \
             -Dsonar.objc.file.suffixes=- \
