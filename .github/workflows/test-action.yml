@@ -27,6 +27,7 @@ jobs:
 
       
   sonarcloud-check:
+    needs: software-development-tests
     runs-on: ubuntu-latest
     env:
       SONAR_SCANNER_VERSION: 4.6.1.2450
@@ -67,4 +68,8 @@ jobs:
           sonar-scanner \
             -Dsonar.python.coverage.reportPaths=coverage.xml \
             -Dsonar.analysis.ci=true \
-            -Dsonar.scm.provider=git
+            -Dsonar.scm.provider=git \
+            -Dsonar.c.file.suffixes=- \
+            -Dsonar.cpp.file.suffixes=- \
+            -Dsonar.objc.file.suffixes=- \
+            -Dsonar.exclusions=venv/**,**/__pycache__/**,**/*.pyc
